@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "creme.h" /* Inclusion de notre librairie réseau */
+#include "creme.h" 
 
 int run = 1, debug=0;
 
-#define MAXPAR 10 /* nombre maximum de mots dans la commande */
+#define MAXPAR 10 
 
 char * Mots[MAXPAR];
 int NMots;
@@ -17,7 +17,7 @@ void Sortie(void) { run = 0; }
 void executeCommande(void)
 {
    if (strcmp(Mots[0],"exit") == 0) {
-       /* Par sécurité, on arrête le serveur si on quitte l'interpréteur */
+       // On clean avant de quitter
        beuip_stop();
        return Sortie();
    }
@@ -25,23 +25,28 @@ void executeCommande(void)
    /* --- Commandes BEUIP --- */
    if (strcmp(Mots[0], "beuip") == 0) {
        if (NMots == 3 && strcmp(Mots[1], "start") == 0) {
-           beuip_start(Mots[2]); /* beuip start pseudo */
+           beuip_start(Mots[2]); 
            return;
        } else if (NMots == 2 && strcmp(Mots[1], "stop") == 0) {
-           beuip_stop(); /* beuip stop */
+           beuip_stop(); 
+           return;
+       } else if (NMots == 3 && strcmp(Mots[1], "ls") == 0) {
+           beuip_ls(Mots[2]); // beuip ls pseudo
+           return;
+       } else if (NMots == 4 && strcmp(Mots[1], "get") == 0) {
+           beuip_get(Mots[2], Mots[3]); // beuip get pseudo nomfic
            return;
        }
-       fprintf(stderr, "Utilisation: beuip start <pseudo> | beuip stop\n");
+       fprintf(stderr, "Utilisation: beuip start <pseudo> | beuip stop | beuip ls <pseudo> | beuip get <pseudo> <fichier>\n");
        return;
    }
 
    /* --- Commandes MESS --- */
    if (strcmp(Mots[0], "mess") == 0) {
        if (NMots == 2 && strcmp(Mots[1], "liste") == 0) {
-           mess_liste(); /* afficher la liste des pseudos présents */
+           mess_liste(); 
            return;
        } else if (NMots >= 3 && strcmp(Mots[1], "all") == 0) {
-           /* Reconstitution du message complet pour envoyer à tout le monde */
            char msg[512] = "";
            for(int i = 2; i < NMots; i++) {
                strcat(msg, Mots[i]);
@@ -50,7 +55,6 @@ void executeCommande(void)
            mess_send_all(msg);
            return;
        } else if (NMots >= 3) {
-           /* Reconstitution du message complet pour envoyer à un pseudo (Mots[1]) */
            char msg[512] = "";
            for(int i = 2; i < NMots; i++) {
                strcat(msg, Mots[i]);
@@ -67,7 +71,7 @@ void executeCommande(void)
    return;
 }
 
-int traiteCommande(char * b) /* separe la ligne de commande en mots */
+int traiteCommande(char * b) 
 {
 char *d, *f;
 int mode =1;
@@ -75,13 +79,13 @@ int mode =1;
    f=b+strlen(b);
    NMots=0;
    while (d<f) {
-     if (mode) { /* on cherche le 1er car. non separateur */
+     if (mode) { 
         if ((*d != ' ') && (*d != '\t')) {
            if (NMots == MAXPAR) break;
            Mots[NMots++] = d;
            mode = 0;
         }
-     } else { /* on cherche le 1er separateur */
+     } else { 
         if ((*d == ' ') || (*d == '\t')) {
           *d = '\0';
           mode = 1;
@@ -106,12 +110,12 @@ int n, i;
       else fprintf(stderr,"parametre %s invalide !\n",P[1]);
    }
    while (run) {
-     printf("biceps> "); /* Changement du prompt triceps> en biceps> */
+     printf("biceps> "); 
      if ((n = getline(&buf, &lb, stdin)) != -1) {
          if (buf[n-1] == '\n') buf[--n] = '\0';
          if (debug) printf("Lu %d car.: %s\n",n,buf);
      } else break;
-     /* traitement de la commande */
+     
      n = traiteCommande(buf);
      if (debug) {
         printf("La commande est %s !\n",Mots[0]);
