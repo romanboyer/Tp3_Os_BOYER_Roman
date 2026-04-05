@@ -16,4 +16,10 @@ int mess_send_one(const char *pseudo, const char *message);
 /* Envoie un message à tous les connectés */
 int mess_send_all(const char *message);
 
+/* Demande la liste des fichiers à un pseudo */
+int beuip_ls(const char *pseudo);
+
+/* Télécharge un fichier depuis un pseudo */
+int beuip_get(const char *pseudo, const char *nomfic);
+
 #endif
