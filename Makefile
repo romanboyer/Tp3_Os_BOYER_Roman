@@ -1,19 +1,17 @@
-default : cliudp servudp clibeuip creme.o biceps
+CC = cc
+CFLAGS = -Wall -Werror -pthread
 
-cliudp : cliudp.c
-	cc -Wall -Werror -o cliudp cliudp.c
+default: biceps
 
-servudp : servudp.c
-	cc -Wall -Werror -o servudp servudp.c
+biceps: triceps.c creme.o
+	$(CC) $(CFLAGS) -o biceps triceps.c creme.o
 
-clibeuip : clibeuip.c
-	cc -Wall -Werror -DTRACE -o clibeuip clibeuip.c
+memory-leak: CFLAGS = -Wall -Werror -pthread -g -O0
+memory-leak: triceps.c creme.o
+	$(CC) $(CFLAGS) -o biceps-memory-leaks triceps.c creme.o
 
 creme.o: creme.c creme.h
-	cc -Wall -Werror -DTRACE -pthread -c creme.c
+	$(CC) $(CFLAGS) -c creme.c
 
-biceps : triceps.c creme.o
-	cc -Wall -Werror -DTRACE -pthread -o biceps triceps.c creme.o
-
-clean :
-	rm -f cliudp servudp clibeuip biceps triceps *.o
+clean:
+	rm -f biceps biceps-memory-leaks *.o
