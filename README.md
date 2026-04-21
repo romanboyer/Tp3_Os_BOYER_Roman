@@ -7,24 +7,24 @@
 ## Description
 Ce projet est l'aboutissement du TP3 d'OS User. Il s'agit de l'évolution du programme **biceps**, un interpréteur de commandes réseau permettant à des utilisateurs d'échanger des messages et des fichiers sur un réseau local via les protocoles UDP et TCP.
 
-Cette version 3 intègre le multi-threading, la gestion dynamique des interfaces réseau et un serveur de partage de fichiers.
+Cette version intègre le multi-threading, le partage de données sécurisées entre threads (mutex) et la gestion des utilisateurs sous forme de liste chaînée dynamique (partie 2.2). Une fonctionnalité bonus de partage de fichiers via TCP a également été intégrée (Partie 3).
 
-## Fonctionnalités implémentées
-* **Architecture Multi-thread :** L'interpréteur de commandes, le serveur UDP (messages) et le serveur TCP (fichiers) cohabitent dans le même processus, avec une gestion des accès concurrents via des mutex.
-* **Sécurité accrue :** Remplacement des messages en boucle locale par des appels de fonctions internes pour contrer les attaques de type "man-in-the-middle".
-* **Réseau dynamique :** Détection automatique des interfaces réseau actives (`getifaddrs`) et envoi de broadcast dynamique.
-* **Gestion des contacts :** Utilisation d'une liste chaînée dynamique pour stocker les utilisateurs connectés.
-* **Partage de fichiers (TCP) :** Possibilité d'explorer le répertoire public d'un utilisateur distant et de télécharger ses fichiers.
+## Commandes supportées
+* `beuip start <pseudo>` : Lance les serveurs d'écoute.
+* `beuip list` : Affiche la liste des utilisateurs connectés (Format `IP : Pseudo`).
+* `beuip message <pseudo> <message>` : Envoie un message privé.
+* `beuip message all <message>` : Diffuse un message à tous les utilisateurs.
+* `beuip stop` : Quitte le réseau et stoppe les serveurs.
+* `exit` (ou `CTRL+D`) : Stoppe les serveurs proprement et ferme le programme.
 
-## Fichiers principaux
-* `triceps.c` : Code source de l'interpréteur de commandes interactif.
-* `creme.c` / `creme.h` : Librairie réseau (Commandes Rapides pour l'Envoi de Messages Evolués) contenant la logique client/serveur UDP et TCP.
-* `Makefile` : Fichier de compilation automatisée.
-* `reppub/` : Répertoire local public utilisé pour stocker les fichiers à partager.
+*Bonus TCP :*
+* `beuip ls <pseudo>` : Liste les fichiers du répertoire public distant.
+* `beuip get <pseudo> <fichier>` : Télécharge un fichier distant.
 
-## Compilation
-Un `Makefile` est fourni pour compiler le projet avec les options strictes (`-Wall -Werror`) et le support des threads (`-pthread`).
+## Compilation et Tests
+Le Makefile permet de recompiler l'ensemble du projet sans générer de fichiers résiduels en conservant les flags `-Wall -Werror`.
 
-Pour tout compiler :
+**Compiler l'exécutable classique :**
 ```bash
 make
+./biceps
